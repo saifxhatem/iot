@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<% include head %>
+</head>
+<body class="container">
+
+<header>
+	<% include header %>
+</header>
+
+<main>
+    <div class="jumbotron">
+        <h2>Actuators</h2>
+        <h3>Actuators set to <%= data.act_value %></h3>
+        <form action="/actuators" method="post" id="act_set">
+            Set actuator to: <input type="text" name="act_value"><br>
+        </form>
+          
+          <button type="submit" form="act_set" value="Submit">Submit</button>
+    </div>
+</main>
+
+<footer>
+	<% include footer %>
+</footer>
+
+</body>
+</html>

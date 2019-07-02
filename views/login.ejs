@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<% include head %>
+</head>
+<body class="container">
+
+<header>
+	<% include header %>
+</header>
+
+<main>
+    <!--<body onLoad="greet();">-->
+    <div class="jumbotron">
+        <h2>Login</h2>
+        <p>
+            <form action="/login" method="post" id="login">
+                Username: <input type="text" name="uname"><br>
+                Password: <input type="text" name="pass"><br>
+                <button type="submit" form="login" value="Submit">Submit</button>
+            </form>
+        </p>
+        
+
+<p id="hello"></p>
+
+
+    </div>
+</main>
+
+<footer>
+	<% include footer %>
+</footer>
+
+</body>
+</html>
