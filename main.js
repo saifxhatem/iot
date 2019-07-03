@@ -151,6 +151,14 @@ app.route('/login')
             }
     });       
 });    
-    app.listen(port,() => {
-        console.log('Server listening on port', port)
-       });
+
+app.get('/logout', (req,res) =>
+{
+    req.session.destroy()
+    res.redirect('/')
+})
+
+app.listen(port,() => 
+{
+    console.log('Server listening on port', port)
+});
