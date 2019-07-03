@@ -7,8 +7,8 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var urlencodedParser = bodyParser.urlencoded({ extended: true })
 var act_value;
-var logged = 0;
 const SELECT_ALL_READINGS_QUERY = 'SELECT * FROM readings';
+
 app.use(session(
     {
         saveUninitialized: false,
@@ -22,11 +22,8 @@ app.use(session(
 ))
 
 var session_checker = (req, res, next) => { //if user is logged in, trying to access login page will redirect to dash.
-    if (req.session.user_id) {
-        res.redirect('/dash');
-    } else {
-        next();
-    }    
+    if (req.session.user_id)    res.redirect('/dash'); 
+    else                        next();
 };
 
 const db_conn = mysql.createConnection(
@@ -52,7 +49,7 @@ app.route('/')
 
 app.route('/dash')
     .get(function(req,res)
-        {
+    {
         if (req.session.user_id)
         {
             res.render('dash', {
@@ -63,21 +60,15 @@ app.route('/dash')
         {
             res.redirect('/')
         }    
-        })
+    })
 
 app.get('/readings', (req,res) => 
 {
-    
     db_conn.query(SELECT_ALL_READINGS_QUERY, function(error, results, fields) 
     {
-        if(error) 
-        {
-            console.log(error);
-          //  return;
-        }
+        if(error) console.log(error);
         else
         {
-            //console.log(results)
             res.render('readings',
             {
                 data : results,
@@ -126,12 +117,8 @@ app.route('/login')
         const query = SQL`SELECT * FROM users WHERE user_name = ${user_name} AND  pass = ${password}`;
         db_conn.query(query, function(error, results, fields) 
         {
-            if(error)
-            {
-                console.log(error)
-                
-            }
-            if (!results[0])
+            if(error)   console.log(error)
+            else if (!results[0])
             {
                 console.log('Bad login')
                 res.send('Bad login')
@@ -143,7 +130,6 @@ app.route('/login')
                 req.session.user_priv = results[0].priv_level;
                 req.session.user_name = results[0].user_name;
                 console.log('User ' + user_name, 'has logged in successfully with ID ' + user_id)
-                //console.log(req.session)
                 res.render('index',
                 {
                     sess: req.session,
@@ -154,8 +140,13 @@ app.route('/login')
 
 app.get('/logout', (req,res) =>
 {
-    req.session.destroy()
-    res.redirect('/')
+    if (req.session.user_id)
+    {
+        console.log('Here')
+        req.session.destroy()
+        res.redirect('/')
+    }
+    else    res.redirect('/')
 })
 
 app.listen(port,() => 
