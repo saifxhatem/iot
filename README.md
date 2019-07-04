@@ -1,3 +1,3 @@
 # iot
 
-Testing git push
+Summer Training 2019
