@@ -33,7 +33,8 @@ const db_conn = mysql.createConnection(
     password: '',
     database: 'iot'
 });
-    db_conn.connect(err => {if(err) {return err;}});
+
+db_conn.connect(err => {if(err) {return err;}});
 
 port = process.argv[2];
 app.set('view engine', 'ejs');
@@ -43,7 +44,8 @@ app.route('/')
     .get(function(req, res)
     {
         res.render('index',{
-            sess: req.session
+            sess: req.session,
+            page_title: 'Home'
         })
     })
 
@@ -53,7 +55,8 @@ app.route('/dash')
         if (req.session.user_id)
         {
             res.render('dash', {
-                sess: req.session
+                sess: req.session,
+                page_title: 'Dashboard'
             })
         }
         else
@@ -64,25 +67,31 @@ app.route('/dash')
 
 app.get('/readings', (req,res) => 
 {
-    db_conn.query(SELECT_ALL_READINGS_QUERY, function(error, results, fields) 
+    if (req.session.user_id && req.session.user_priv >= 1)
     {
+        db_conn.query(SELECT_ALL_READINGS_QUERY, function(error, results, fields) 
+        {
         if(error) console.log(error);
         else
         {
             res.render('readings',
             {
                 data : results,
-                tagline : tagline
+                page_title: 'Readings'
             });
         }
-    });
-    var tagline = "this should show the readings.";
+        });
+    }
+    else    res.redirect('/')
 });
 
 app.route('/actuators')
     .get(function(req, res)
     {
-        res.render('actuators')
+        res.render('actuators',
+        {
+            page_title: 'Set Actuators'
+        })
     })
     .post(urlencodedParser, function(req, res)
     {
@@ -99,7 +108,11 @@ app.route('/actuators')
             else
             {
                 console.log(req.body);
-                res.render('actuator-success', {data: req.body});
+                res.render('actuator-success',
+                {
+                    data: req.body,
+                    page_title: 'Set Actuators'
+                });
             }
         });
     });
@@ -107,7 +120,10 @@ app.route('/actuators')
 app.route('/login')
     .get(session_checker, function(req, res)
     {
-        res.render('login')
+        res.render('login',
+        {
+            page_title: 'Login'
+        })
     })
     .post(urlencodedParser, function(req, res)
     {
@@ -133,6 +149,7 @@ app.route('/login')
                 res.render('index',
                 {
                     sess: req.session,
+                    page_title: 'Home'
                 })
             }
     });       
@@ -142,7 +159,6 @@ app.get('/logout', (req,res) =>
 {
     if (req.session.user_id)
     {
-        console.log('Here')
         req.session.destroy()
         res.redirect('/')
     }
