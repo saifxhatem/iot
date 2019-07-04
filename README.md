@@ -2,4 +2,4 @@
 
 Summer Training 2019
 
-Testing Credential Helper
+Testing Credential Helper - Auto
