@@ -45,7 +45,6 @@ app.route('/')
         res.render('index',{
             sess: req.session,
             page_title: 'Home',
-            err_msg: 0
         })
     })
 
