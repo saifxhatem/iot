@@ -3,10 +3,9 @@ const cors = require('cors');
 const mysql = require('mysql');
 const app = express();
 const SQL = require('sql-template-strings')
-var bodyParser = require('body-parser');
-var session = require('express-session');
-var urlencodedParser = bodyParser.urlencoded({ extended: true })
-var act_value;
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const urlencodedParser = bodyParser.urlencoded({ extended: true })
 const SELECT_ALL_READINGS_QUERY = 'SELECT * FROM readings';
 
 app.use(session(
@@ -21,7 +20,7 @@ app.use(session(
     }
 ))
 
-var session_checker = (req, res, next) => { //if user is logged in, trying to access login page will redirect to dash.
+const session_checker = (req, res, next) => { //if user is logged in, trying to access login page will redirect to dash.
     if (req.session.user_id)    res.redirect('/dash'); 
     else                        next();
 };
@@ -45,7 +44,8 @@ app.route('/')
     {
         res.render('index',{
             sess: req.session,
-            page_title: 'Home'
+            page_title: 'Home',
+            err_msg: 0
         })
     })
 
@@ -95,16 +95,12 @@ app.route('/actuators')
     })
     .post(urlencodedParser, function(req, res)
     {
-        act_value = req.body.act_value;
+        const act_value = req.body.act_value; //Not pushing act value directly assuming there will be some form of sanitization
         console.log("Actuator set to = " + act_value);
         const query = SQL`INSERT into actuators (act_value) VALUES (${act_value})`;
         db_conn.query(query, function(error, results, fields) 
         {
-            if(error) 
-            {
-                //console.log(act_value);
-                console.log(error);
-            }
+            if(error) console.log(error);
             else
             {
                 console.log(req.body);
